@@ -1,0 +1,5 @@
+{
+  "version": "1.0.0",
+  "controller_url": "https://github.com/yourrepo/render-agent/releases/download/v1.0.0/controller.exe",
+  "worker_url": "https://github.com/yourrepo/render-agent/releases/download/v1.0.0/worker.exe"
+}

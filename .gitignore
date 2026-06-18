@@ -1,0 +1,12 @@
+.key
+config.json
+*.db
+browser_session/
+logs/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.env
+venv/
+.venv/
