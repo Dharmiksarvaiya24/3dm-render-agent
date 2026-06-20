@@ -42,7 +42,7 @@ class RenderFileHandler(FileSystemEventHandler):
             return
 
         if str(path) in self.processed:
-            logger.info(f"Already processed: {path.name}")
+            logger.debug(f"Already processed: {path.name}")
             return
 
         self.processed.add(str(path))
@@ -65,24 +65,42 @@ def scan_folder(folder: Path, handler: RenderFileHandler):
         logger.error(f"Folder scan error: {e}")
 
 
+def scan_existing_files(queue, input_folder):
+    input_folder = Path(input_folder)
+    logger.info(f"Scanning existing files in: {input_folder}")
+
+    existing_files = list(input_folder.glob("*.3dm"))
+    logger.info(f"Found {len(existing_files)} .3dm files")
+
+    for file_path in existing_files:
+        existing_job = queue.get_job_by_filename(file_path.name)
+
+        if existing_job is None:
+            queue.create_job(str(file_path), file_path.name)
+            logger.info(f"✅ Created job for existing file: {file_path.name}")
+        elif existing_job.status in ("COMPLETED", "FAILED"):
+            logger.info(f"Skipping already processed file: {file_path.name} ({existing_job.status})")
+        else:
+            logger.info(f"Job already exists for: {file_path.name} ({existing_job.status})")
+
+
 def start_watcher(queue, input_folder):
     input_folder = Path(input_folder)
     input_folder.mkdir(parents=True, exist_ok=True)
-    logger.info(f"👁 Watching folder: {input_folder}")
+    logger.info(f"Watching folder: {input_folder}")
+
+    scan_existing_files(queue, input_folder)
 
     handler = RenderFileHandler(queue)
 
-    # Scan existing files on startup
-    logger.info("Scanning for existing .3dm files...")
-    scan_folder(input_folder, handler)
+    for f in input_folder.glob("*.3dm"):
+        handler.processed.add(str(f))
 
-    # Start watchdog for real-time events
     observer = Observer()
     observer.schedule(handler, str(input_folder), recursive=False)
     observer.start()
     logger.info("✅ Watcher started")
 
-    # Keep thread alive and periodically scan for missed files
     try:
         while True:
             time.sleep(POLL_INTERVAL)

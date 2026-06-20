@@ -165,7 +165,7 @@ async def poll_loop(controller_url: str, worker_id: str, config: dict) -> None:
     running = True
     while running:
         try:
-            logger.info("Polling for jobs...")
+            logger.debug("Polling for jobs...")
             job = await get_next_job(worker_id, controller_url)
             if job:
                 logger.info(f"✅ Got job: {job['file_name']}")
@@ -191,10 +191,10 @@ async def poll_loop(controller_url: str, worker_id: str, config: dict) -> None:
                 )
 
                 logger.info(f"Job {job['id']} completed successfully")
-                logger.info("Job done, polling immediately for next job")
+                logger.debug("Job done, polling immediately for next job")
                 continue
             else:
-                logger.info("No jobs available, waiting 3s...")
+                logger.debug("No jobs available, waiting 3s...")
                 await asyncio.sleep(3)
         except requests.exceptions.ConnectionError:
             logger.error("Connection error, retrying in 3s...")
@@ -214,7 +214,7 @@ async def poll_loop(controller_url: str, worker_id: str, config: dict) -> None:
                     )
             except Exception:
                 pass
-            logger.info("Polling for next job after failure...")
+            logger.debug("Polling for next job after failure...")
             await asyncio.sleep(3)
 
 

@@ -40,7 +40,7 @@ def start_udp_listener(port: int) -> None:
                     local_ip = get_local_ip()
                     response = f"RENDERAGENT_CONTROLLER http://{local_ip}:8765".encode()
                     sock.sendto(response, addr)
-                    logger.info(f"Discovery response sent to {addr[0]}")
+                    logger.debug(f"Discovery response sent to {addr[0]}")
             except socket.timeout:
                 continue
             except Exception:
@@ -87,9 +87,12 @@ def main() -> None:
                     config.set(key, str(value))
             logger.info("Setup complete")
 
-        from controller.job_queue import init_db
+        from controller.job_queue import init_db, reset_stuck_jobs
 
         init_db()
+
+        reset_stuck_jobs(timeout_minutes=2)
+        logger.info("✅ Stuck jobs reset")
 
         input_folder = config.get("input_folder") or os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "input"
@@ -142,7 +145,8 @@ def main() -> None:
             "controller.api:app",
             host="0.0.0.0",
             port=port,
-            log_level="info",
+            log_level="warning",
+            access_log=False,
         )
 
     except KeyboardInterrupt:

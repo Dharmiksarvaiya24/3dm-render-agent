@@ -51,6 +51,20 @@ def create_job(file_path: str, file_name: Optional[str] = None) -> Job:
         raise
 
 
+def get_job_by_filename(filename: str) -> Optional[Job]:
+    try:
+        with _SessionLocal() as session:
+            return (
+                session.query(Job)
+                .filter(Job.file_name == filename)
+                .order_by(desc(Job.created_at))
+                .first()
+            )
+    except Exception as e:
+        logger.error(f"Error getting job by filename {filename}: {e}")
+        return None
+
+
 def claim_next_job(worker_id: str) -> Optional[Job]:
     try:
         with _SessionLocal() as session:
@@ -191,20 +205,21 @@ def clear_all_jobs() -> int:
         return 0
 
 
-def reset_stuck_jobs(timeout_minutes: int = 30) -> int:
+def reset_stuck_jobs(timeout_minutes: int = 2) -> int:
     try:
         cutoff = datetime.utcnow() - timedelta(minutes=timeout_minutes)
         with _SessionLocal() as session:
             stuck = (
                 session.query(Job)
                 .filter(
-                    Job.status == JobStatus.CLAIMED,
+                    Job.status.in_([JobStatus.CLAIMED, JobStatus.PROCESSING]),
                     Job.updated_at <= cutoff,
                 )
                 .all()
             )
             count = 0
             for job in stuck:
+                logger.info(f"Resetting stuck job: {job.file_name} (was {job.status})")
                 job.status = JobStatus.PENDING
                 job.worker_id = None
                 job.updated_at = datetime.utcnow()
