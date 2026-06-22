@@ -1,0 +1,11 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.0
+watchdog>=3.0.0
+pystray>=0.19.0
+Pillow>=10.0.0
+pywin32>=306
+cryptography>=41.0.0
+requests>=2.31.0
+pydantic>=2.5.0
+pyinstaller>=6.0.0

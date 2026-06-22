@@ -1,0 +1,195 @@
+================================================================
+                    RenderAgent — How To Use
+================================================================
+
+RenderAgent automatically renders 3D files (.3dm) across multiple
+computers on your network. One computer acts as the "Controller"
+(main computer), and the others act as "Workers" (helper computers).
+
+
+================================================================
+                    WHAT YOU NEED
+================================================================
+
+  - A Windows computer (for the Controller)
+  - One or more additional Windows computers (for Workers)
+  - All computers must be on the same network (Wi-Fi or Ethernet)
+  - An active internet connection for the first-time setup
+  - A USB drive to transfer the installer (if computers are not
+    already connected via network)
+
+
+================================================================
+                    FIRST-TIME SETUP
+================================================================
+
+
+----------------------
+  STEP 2: Install the software
+----------------------
+  On the MAIN computer (Controller):
+    - Double-click "Install_Controller.bat"
+    - Wait for the installation to finish (may take 5–10 minutes)
+    - The installer will download and install Python, Node.js,
+      and all required packages automatically
+
+  On HELPER computers (Worker):
+    - Double-click "Install_Worker.bat"
+    - Wait for installation to finish
+
+  NOTE: You may see a black command prompt window — do not close it.
+        Let it run until it says "Setup Complete" and asks you to
+        press any key.
+
+----------------------
+  STEP 3: Set up the Controller (main computer)
+----------------------
+  After installation, go to your Desktop and double-click:
+      "RenderAgent Controller"
+
+  The first time you run it, a SETUP WIZARD window will appear.
+  Fill in the following:
+
+      iJewel Email       — Your iJewel account email address
+      Password           — Your iJewel account password
+      Input Folder       — Where you will drop .3dm files to render
+                           (default: C:\RenderAgent\input)
+      Output Folder      — Where finished renders will be saved
+                           (default: C:\RenderAgent\output)
+
+  Click the "SAVE" button. You're done!
+
+----------------------
+  STEP 4: Set up each Worker (helper computer)
+----------------------
+  Go to the helper computer's Desktop and double-click:
+      "RenderAgent Worker"
+
+  A SETUP WIZARD window will appear. Fill in:
+
+      Controller IP      — Click "AUTO-DISCOVER" to find the main
+                           computer automatically, OR type the IP
+                           address of the Controller computer
+                           (e.g. 192.168.1.100)
+
+      Output Folder      — Where finished renders will be saved
+                           (default: C:\RenderAgent\output)
+
+  Click "SAVE" to finish.
+
+
+================================================================
+                    DAILY USE
+================================================================
+
+----------------------
+  STARTING THE SYSTEM
+----------------------
+  1. On the MAIN computer:
+       Double-click the "RenderAgent Controller" shortcut on
+       your Desktop. A small icon will appear in your system tray
+       (near the clock at the bottom-right of your screen).
+
+  2. On each HELPER computer:
+       Double-click the "RenderAgent Worker" shortcut on your
+       Desktop. The worker will automatically connect to the
+       Controller and wait for rendering tasks.
+
+----------------------
+  SUBMITTING A RENDER JOB
+----------------------
+  - Copy your .3dm files into the INPUT folder
+    (default: C:\RenderAgent\input)
+  - The Controller will detect the new files automatically and
+    add them to the render queue
+  - Workers will pick up jobs and start rendering one by one
+
+----------------------
+  GETTING YOUR RENDERED FILES
+----------------------
+  - Finished renders (MP4 videos or JPG images) appear in the
+    OUTPUT folder (default: C:\RenderAgent\output)
+  - Each output file has the same name as the input .3dm file
+
+----------------------
+  CHECKING PROGRESS (WEB DASHBOARD)
+----------------------
+  Open a web browser on any computer in your network and go to:
+      http://CONTROLLER_IP:8765
+
+  Replace CONTROLLER_IP with the IP address of the main computer.
+  Example: http://192.168.1.100:8765
+
+  The dashboard shows:
+    - Active jobs in the queue
+    - Which Worker is rendering each job
+    - Completed renders
+
+
+================================================================
+                    WHAT EACH COMPUTER DOES
+================================================================
+
+  CONTROLLER (Main Computer):
+    - Watches the input folder for new .3dm files
+    - Manages the render queue
+    - Sends jobs to available Workers
+    - Hosts the web dashboard
+
+  WORKER (Helper Computer):
+    - Connects to the Controller over your network
+    - Picks up render jobs from the queue
+    - Logs into iJewel automatically
+    - Opens the .3dm file and triggers the render
+    - Downloads the finished render and saves it to the output
+      folder
+
+
+================================================================
+                    TROUBLESHOOTING
+================================================================
+
+  PROBLEM: Installer says "Python not found" and fails to download
+  SOLUTION: Make sure you have an active internet connection.
+            If the download fails, try running the installer again.
+
+  PROBLEM: Worker cannot find the Controller
+  SOLUTION: Make sure both computers are on the same Wi-Fi or
+            Ethernet network. Try clicking "AUTO-DISCOVER" again.
+            If it still doesn't work, type the Controller's IP
+            address manually (you can find this in the Controller's
+            setup window or by asking your IT person).
+
+  PROBLEM: A job stays in the queue and never starts
+  SOLUTION: Check that at least one Worker is running and connected.
+            Restart the Worker computer and try again.
+
+  PROBLEM: Something else is wrong
+  SOLUTION: Check the log files at:
+            C:\RenderAgent\logs\controller.log
+            C:\RenderAgent\logs\worker.log
+            Or restart both the Controller and all Workers.
+
+  PROBLEM: I want to change my settings
+  SOLUTION: Delete the file "config.json" in C:\RenderAgent\app\
+            and restart the application. The setup wizard will
+            appear again.
+
+  PROBLEM: I want to uninstall
+  SOLUTION: Simply delete the C:\RenderAgent folder and remove
+            the desktop shortcuts. No other changes are made to
+            your system.
+
+
+================================================================
+                    NEED HELP?
+================================================================
+
+  If you run into any issues, please contact support with the
+  following information:
+
+  - Which computer you are using (Controller or Worker)
+  - What step you were on when the problem occurred
+  - Any error messages you saw
+  - The contents of the log files (C:\RenderAgent\logs\)
+
